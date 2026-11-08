@@ -86,7 +86,7 @@ const SALIDAS_HOY = [["Huécar","RIDER 1C",1,"09:00","Gema Cuenca Sánchez","JOY
 ["Huécar","RIDER 2B (CAMPEONATO)",12,"13:17","Sofia Peña Rodríguez","POCHOLO XVII"],
 ["Huécar","RIDER 2B (CAMPEONATO)",13,"13:24","Alicia Toro Puerta","DAMASCO XXII"],
 ["Huécar","RIDER 2B (CAMPEONATO)",14,"13:31","Valeria Cava Sabio","SILVANA"],
-["Huécar","RIDER 2B (CAMPEONATO)",15,"13:38","Carlota de La Fuente García","RONDÉÑO"],
+["Huécar","RIDER 2B (CAMPEONATO)",15,"13:38","Carlota de La Fuente García","RONDEÑO"],
 ["Huécar","RIDER 2B (CAMPEONATO)",16,"13:45","Triana Abad Aranda","GACEL 25%"],
 ["Huécar","RIDER 2B (CAMPEONATO)",17,"13:52","Enrique Cañas Lara","GIRASOL IV JR 50%"],
 ["Huécar","RIDER 2B (CAMPEONATO)",18,"13:59","Marina Saiz Gil","PIREN"],
