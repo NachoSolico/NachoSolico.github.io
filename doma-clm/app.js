@@ -103,6 +103,12 @@ function aplicarRetrasos(arr){
   arr.forEach(s => { if (s.mE == null){ s.mE = s.m; s.desfase = 0; } });
   return arr;
 }
+// Marca a un jinete como el que está en pista ahora: el retraso o adelanto pasa a los siguientes hasta el descanso
+function marcarEnPista(s){
+  if (!s || s.m == null) return;
+  st.offset[s.pista] = {min: Math.floor(ahoraMin() - s.m), bloque: s.bloque || 0};
+  guardar("offset", st.offset);
+}
 const horaPrevista = s => s.desfase ? `≈${fmtHM(s.mE)}` : "";
 const pistas = list => [...new Set(list.map(s => s.pista))];
 function enPista(list, pista){
@@ -148,7 +154,8 @@ function vSalidas(){
     else if (e.ultimo) estado = `<span class="pill grey">Terminada</span>`;
     else estado = `<span class="pill grey">Descanso</span>`;
     const pie = `<div class="pie"><span class="small muted">${e.sig && !e.antes ? `Siguiente: <b>${esc(e.sig.desfase ? horaPrevista(e.sig) : e.sig.hora)}</b> ${esc(e.sig.jinete)}` : ""}</span>${e.act ? `<button class="btn primary" data-sel="${esc(e.act.key)}">Seguir reprise ›</button>` : ""}</div>`;
-    return `<div class="now"><div class="pista">${esc(p)}${estado}</div>${body}${pie}${ajuste}</div>`;
+    const entra = e.sig ? `<button class="btn entra" data-entra="${esc(e.sig.key)}">Ha entrado el siguiente</button>` : "";
+    return `<div class="now"><div class="pista">${esc(p)}${estado}</div>${body}${pie}${entra}${ajuste}</div>`;
   }).join("") + `</section>`;
   if (!st.subida) h += `<div class="row" style="justify-content:space-between"><span class="small muted">${st.estadoRes || ("Clasificaciones hasta las " + esc(st.res.hora || "--:--"))}</span>${botonActualizar()}</div>`;
   if (!esHoy && !st.subida) h += `<p class="note">Lo que está «en pista» se calcula con la hora del móvil y el horario de la orden de salida (${esc(EVENTO_HOY.fechaTxt)}).</p>`;
@@ -243,6 +250,7 @@ function vDirecto(){
     <span class="name">${esc(s.jinete)}</span>
     <span class="horse">${esc(s.caballo)}</span>
     <div class="row">${r ? `<span class="pill">Hoy: ${esc(fmtPuesto(r.puesto))} · ${esc(r.resultado??"")}</span>` : ""}${(() => { const cf = campeonatoDe(s); if (!cf || !cf.f.puesto) return ""; const f = cf.f; return `<span class="pill hl">Campeonato ${esc(cf.c.nombre)}: ${f.puesto}.º · ${f.media != null ? "media " + fmtNum(f.media) + " %" : "ayer " + fmtNum(f.a) + " %"}</span>`; })()}</div>
+    ${(() => { const e = enPista(list, s.pista); return e.act && e.act.key === s.key ? `<span class="pill hl" style="align-self:flex-start">En pista ahora</span>` : `<button class="btn entra" data-entra="${esc(s.key)}">Está en pista ahora</button>`; })()}
     <div class="navr" style="margin-top:6px">
       <button class="btn" data-sel="${esc(enLaPista[idx-1]?.key||"")}" ${idx>0?"":"disabled"}>‹ Jinete ant.</button>
       <button class="btn" data-sel="${esc(enLaPista[idx+1]?.key||"")}" ${idx<enLaPista.length-1?"":"disabled"}>Jinete sig. ›</button>
@@ -627,6 +635,12 @@ document.addEventListener("click", ev => {
     if (s) elegir(s.key);
     return;
   }
+  if (b.dataset.entra !== undefined){   // un doble toque sin querer no salta dos jinetes
+    const s = salidas().find(x => x.key === b.dataset.entra); if (!s) return;
+    st.ultimaEntra = st.ultimaEntra || {};
+    if (Date.now() - (st.ultimaEntra[s.pista] || 0) < 3000) return;
+    st.ultimaEntra[s.pista] = Date.now(); marcarEnPista(s); return render();
+  }
   const act = b.dataset.act;
   if (act === "volverHoy"){ st.subida = null; guardar("subida", null); st.sel = null; st.estadoOS = ""; iniciarRes(); return render(); }
   if (act === "actualizarWeb") return actualizarDesdeWeb(false);
@@ -643,7 +657,7 @@ document.addEventListener("change", async ev => {
   if (ev.target.id === "autoRes"){ st.autoOn = ev.target.checked; guardar("autoOn", st.autoOn); if (st.autoOn) tareaAuto(); return render(); }
   if (ev.target.dataset && ev.target.dataset.pistasel !== undefined){
     const p = ev.target.dataset.pistasel, s = salidas().find(x => x.key === ev.target.value);
-    if (s && s.m != null){ st.offset[p] = {min: Math.floor(ahoraMin() - s.m), bloque: s.bloque || 0}; guardar("offset", st.offset); }
+    marcarEnPista(s);
     return render();
   }
   if (ev.target.id === "fileRes" && ev.target.files.length){
