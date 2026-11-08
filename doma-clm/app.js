@@ -55,7 +55,8 @@ const st = {
   res: null,
   enlaceRes: leer("enlaceRes", EVENTO_HOY.web),
   estadoRes: "", estadoOS: "", textoRes: "", cargandoWeb: false, vistaRes: leer("vistaRes", "campeonato"),
-  autoOn: leer("autoOn", true), autoListo: FUENTE_WEB ? true : leer("autoListo", false), ultimaAuto: 0
+  autoOn: leer("autoOn", true), autoListo: FUENTE_WEB ? true : leer("autoListo", false), ultimaAuto: 0,
+  catRes: leer("catRes", "")   // categoría elegida en Clasificaciones ("" = todas)
 };
 function iniciarRes(){
   const guardado = leer("res", {pruebas:[], hora:null});
@@ -327,6 +328,7 @@ function celdaDia(r, valor, f, hoy){
 function vCampeonato(){
   let h = `<p class="small muted" style="margin:0">Provisional. Media de la prueba de ayer y la de hoy, con el mismo peso.</p>`;
   for (const c of CAMPEONATOS){
+    if (st.catRes && c.nombre !== st.catRes) continue;
     const filas = calcularCampeonato(c);
     if (!filas.length) continue;
     h += `<section class="card"><div class="row" style="justify-content:space-between;align-items:baseline"><h3 style="font-family:var(--display);margin:0;font-size:21px">${esc(c.nombre)}</h3><span class="small muted">${esc(c.d1)} + ${esc(c.d2)}</span></div>
@@ -351,7 +353,20 @@ function masOpciones(){
       <div class="row"><button class="btn" data-act="guardarEnlace">Guardar enlace</button><button class="btn" data-act="borrarRes">Volver a los datos de origen</button></div>
     </div></details>`;
 }
+// Filtro por categoría: hoy, las categorías del campeonato; en otro concurso, cada prueba
+function categorias(){
+  if (st.subida) return [...new Set(salidas().map(s => s.prueba))].map(p => ({id:p, nombre:p}));
+  return CAMPEONATOS.map(c => ({id:c.nombre, nombre:c.nombre}));
+}
+function pruebaEnCategoria(prueba){
+  if (!st.catRes) return true;
+  if (st.subida) return prueba === st.catRes;
+  const c = CAMPEONATOS.find(c => c.nombre === st.catRes);
+  return !!c && sinCamp(prueba) === sinCamp(c.os);   // la prueba de campeonato y la que no lo es
+}
+const selectorCategoria = () => `<select id="catRes" aria-label="Categoría">${[{id:"", nombre:"Todas las categorías"}, ...categorias()].map(o => `<option value="${esc(o.id)}"${o.id === st.catRes ? " selected" : ""}>${esc(o.nombre)}</option>`).join("")}</select>`;
 function vClasif(){
+  if (st.catRes && !categorias().some(c => c.id === st.catRes)) st.catRes = "";
   const list = salidas();
   const pruebasOS = []; for (const s of list) if (!pruebasOS.some(p => p.prueba===s.prueba && p.pista===s.pista)) pruebasOS.push({pista:s.pista, prueba:s.prueba});
   const res = (st.res.pruebas || []).filter(p => jor(p) === 2);
@@ -363,12 +378,14 @@ function vClasif(){
     ${casillaAuto()}
     <p class="status" id="estadoRes" style="margin:0">${st.estadoRes || (st.res.hora ? `Datos hasta las ${esc(st.res.hora)}` : "")}</p>
     ${st.subida ? "" : `<div class="seg" role="group" aria-label="Vista">${[["campeonato","Campeonato"],["hoy","Pruebas de hoy"]].map(([k,t]) => `<button data-vista="${k}" aria-pressed="${st.vistaRes===k}">${t}</button>`).join("")}</div>`}
+    ${selectorCategoria()}
   </section>`;
   if (!st.subida && st.vistaRes === "campeonato") return h + vCampeonato() + masOpciones();
   const tabla = r => r && r.clasificacion?.length ? `<div style="overflow-x:auto"><table><thead><tr><th class="num">Puesto</th><th>Jinete y caballo</th><th class="num">Resultado</th></tr></thead><tbody>${
       r.clasificacion.map(c => `<tr><td class="num">${esc(fmtPuesto(c.puesto))}</td><td><b>${esc(c.jinete)}</b><br><span class="horse">${esc(c.caballo||"")}</span></td><td class="num">${esc(c.resultado||"")}</td></tr>`).join("")}</tbody></table></div>` : `<div class="empty">Sin clasificación cargada.</div>`;
   let pistaAnt = null;
   for (const p of pruebasOS){
+    if (!pruebaEnCategoria(p.prueba)) continue;
     if (p.pista !== pistaAnt){ h += `<div class="label" style="margin-top:4px">Pista ${esc(p.pista)}</div>`; pistaAnt = p.pista; }
     const r0 = buscar(p.prueba), lr = enlaceRes(p.prueba);
     const jinetes = list.filter(x => x.prueba === p.prueba && x.pista === p.pista).map(x => new Set(norm(x.jinete).split(" ")));
@@ -377,7 +394,7 @@ function vClasif(){
     const quitadas = r0 ? (r0.clasificacion || []).length - r.clasificacion.length : 0;
     h += `<section class="card"><div class="row" style="justify-content:space-between;margin-bottom:6px"><h3 style="font-family:var(--display);margin:0;font-size:19px">${esc(p.prueba)}</h3>${lr ? `<a class="small" href="${esc(lr)}" target="_blank" rel="noopener">Web ↗</a>` : ""}</div>${r && r.actualizado ? `<p class="small muted" style="margin:0 0 6px">${esc(r.actualizado)}</p>` : ""}${tabla(r)}</section>`;
   }
-  const otras = res.filter((r,i) => !usadas.has(i));
+  const otras = st.catRes ? [] : res.filter((r,i) => !usadas.has(i));
   if (otras.length){
     h += `<div class="label">Otras pruebas encontradas en los resultados</div>`;
     for (const r of otras) h += `<section class="card"><h3 style="font-family:var(--display);margin:0 0 6px;font-size:19px">${esc(r.prueba)}</h3>${tabla(r)}</section>`;
@@ -622,6 +639,7 @@ document.addEventListener("input", ev => {
   if (ev.target.id === "buscar"){ st.q = ev.target.value; const pos = ev.target.selectionStart; render(); const i = $("#buscar"); if (i){ i.focus(); try{ i.setSelectionRange(pos,pos); }catch(e){} } }
 });
 document.addEventListener("change", async ev => {
+  if (ev.target.id === "catRes"){ st.catRes = ev.target.value; guardar("catRes", st.catRes); return render(); }
   if (ev.target.id === "autoRes"){ st.autoOn = ev.target.checked; guardar("autoOn", st.autoOn); if (st.autoOn) tareaAuto(); return render(); }
   if (ev.target.dataset && ev.target.dataset.pistasel !== undefined){
     const p = ev.target.dataset.pistasel, s = salidas().find(x => x.key === ev.target.value);
