@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doma Clásica CLM en directo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Herramienta de pista para el móvil: una columna, cabecera fija con tres pestañas y la pista 20x60 como pieza central del directo */
+  --bg:#f2f4f1; --surface:#ffffff; --ink:#15201b; --muted:#5b6962; --line:#d8dfda;
+  --accent:#1b6a4f; --accent-ink:#ffffff; --accent-soft:#e0eee7;
+  --hl:#b5690a; --hl-ink:#ffffff; --hl-soft:#fbeed6;
+  --sand:#ece2cc; --sand-line:#c8b58c; --done:#98a39d; --bad:#a3361f;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1411; --surface:#17201c; --ink:#e5ebe7; --muted:#99a79f; --line:#2a3530;
+    --accent:#52b28d; --accent-ink:#04120c; --accent-soft:#1b3127;
+    --hl:#f1a845; --hl-ink:#1d1405; --hl-soft:#3a2a12;
+    --sand:#352f24; --sand-line:#6c5f45; --done:#5f6c66; --bad:#e2775f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1411; --surface:#17201c; --ink:#e5ebe7; --muted:#99a79f; --line:#2a3530;
+  --accent:#52b28d; --accent-ink:#04120c; --accent-soft:#1b3127;
+  --hl:#f1a845; --hl-ink:#1d1405; --hl-soft:#3a2a12;
+  --sand:#352f24; --sand-line:#6c5f45; --done:#5f6c66; --bad:#e2775f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+button,input,textarea{font:inherit;color:inherit}
+button,a,select,label{touch-action:manipulation}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:8px 0 0}
+.brand h1{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:.2px;margin:0;line-height:1.1}
+.brand .clock{font-family:var(--display);font-weight:600;font-size:19px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sub{font-size:12px;color:var(--muted);margin:0 0 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* pestañas abajo, al alcance del pulgar */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:6px max(8px, calc(50% - 372px)) calc(6px + env(safe-area-inset-bottom))}
+nav.tabs button{border:0;background:transparent;border-radius:10px;min-height:46px;font-weight:700;font-size:15px;cursor:pointer;color:var(--muted)}
+nav.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+main{padding:12px 0 calc(90px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px}
+main.con-barra{padding-bottom:calc(160px + env(safe-area-inset-bottom))}
+.stepbar{position:fixed;left:0;right:0;bottom:calc(58px + env(safe-area-inset-bottom));z-index:5;background:var(--bg);border-top:1px solid var(--line);padding:8px 0}
+.stepgrid{display:grid;grid-template-columns:58px 1fr 1.5fr;gap:8px;align-items:center}
+.stepinfo{text-align:center;line-height:1.15;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.stepinfo b{display:block;font-family:var(--display);font-size:20px;letter-spacing:1.5px;color:var(--hl)}
+.stepbar .btn{min-height:50px;justify-content:center;font-size:18px;white-space:nowrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;padding:8px 12px;font-weight:600;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+select{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface);color:var(--ink);font:inherit;font-size:16px}
+input[type=search],input[type=url],textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);font-size:16px}
+textarea{min-height:110px;resize:vertical}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;min-height:42px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.big{padding:14px 16px;font-size:18px;justify-content:center}
+.btn:disabled{opacity:.45;cursor:default}
+.label{font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.now-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.now-grid{grid-template-columns:1fr}}
+.now{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface);display:flex;flex-direction:column;gap:5px}
+.now .pie{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.now .pie .small{min-width:0}
+.now .pie .btn{white-space:nowrap;flex-shrink:0}
+.now .pista{font-family:var(--display);font-weight:700;font-size:19px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pill.hl{background:var(--hl-soft);color:var(--hl)}
+.pill.grey{background:var(--line);color:var(--muted)}
+.who{font-weight:700;line-height:1.2}
+.horse{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+.prueba{margin-top:4px}
+.prueba h3{font-family:var(--display);font-weight:700;font-size:19px;margin:0;line-height:1.15;text-wrap:balance}
+.prueba .meta{font-size:13px;color:var(--muted);margin:2px 0 8px}
+.list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.item{display:grid;grid-template-columns:56px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:0;border-top:1px solid var(--line);background:transparent;text-align:left;cursor:pointer;width:100%}
+.item:first-child{border-top:0}
+.item .h{font-family:var(--display);font-weight:600;font-size:19px;font-variant-numeric:tabular-nums;line-height:1.05}
+.item .h .est{display:block;font-size:13px;color:var(--hl);font-weight:700}
+.item.past{opacity:.55}
+.item.live{background:var(--hl-soft)}
+.item.sel{box-shadow:inset 4px 0 0 var(--accent)}
+.item .go{color:var(--muted);font-size:20px}
+.res{font-size:12px;font-weight:700;color:var(--accent);white-space:nowrap;text-align:right}
+.pausa{font-size:13px;color:var(--muted);text-align:center;padding:4px 0}
+.rider-head{display:flex;flex-direction:column;gap:4px}
+.rider-head .name{font-family:var(--display);font-weight:700;font-size:23px;line-height:1.05;text-wrap:balance}
+.navr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.navr .btn{justify-content:center;font-size:14px;padding:8px 6px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips .btn{font-size:13px;min-height:36px;padding:6px 10px}
+.live-grid{display:grid;grid-template-columns:112px 1fr;gap:12px;align-items:start}
+@media (max-width:370px){.live-grid{grid-template-columns:96px 1fr}}
+.arena svg{width:100%;height:auto;display:block}
+.current{display:flex;flex-direction:column;gap:8px;min-height:100%}
+.current .num{font-family:var(--display);font-weight:600;font-size:16px;color:var(--muted)}
+.current .letters{font-family:var(--display);font-weight:700;font-size:30px;letter-spacing:2px;color:var(--hl);line-height:1}
+.current .text{font-size:18px;font-weight:600;line-height:1.3}
+.mov{font-size:15px;display:grid;grid-template-columns:28px 56px 1fr auto;gap:8px;align-items:baseline;padding:9px 12px;border:0;border-top:1px solid var(--line);background:transparent;text-align:left;cursor:pointer;width:100%}
+.mov:first-child{border-top:0}
+.mov .n{font-family:var(--display);font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.mov .l{font-family:var(--display);font-weight:700;letter-spacing:1px}
+.mov.done{color:var(--done)}
+.mov.cur{background:var(--hl-soft);box-shadow:inset 4px 0 0 var(--hl)}
+.coef{font-size:11px;font-weight:700;padding:1px 6px;border-radius:6px;background:var(--accent-soft);color:var(--accent)}
+.note{font-size:13px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px}
+.err{color:var(--bad);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:7px 6px;border-top:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;border-top:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+details summary{cursor:pointer;font-weight:600}
+table.camp{font-size:13px}
+table.camp th,table.camp td{padding:7px 4px}
+table.camp td.dias{font-size:12px;line-height:1.5;color:var(--ink)}
+table.camp td.media{font-size:14px}
+tr.podio td:first-child{color:var(--hl);font-weight:700}
+.empty{padding:14px;text-align:center;color:var(--muted);font-size:14px}
+.status{font-size:14px}
+.hidden{display:none}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><h1 id="titulo">Doma Clásica CLM</h1><span class="clock" id="reloj">--:--</span></div>
+    <p class="sub" id="subtitulo"></p>
+  </div>
+</header>
+<div class="wrap"><main id="main"></main></div>
+<nav class="tabs" role="tablist">
+  <button role="tab" id="tab-salidas" data-tab="salidas">Salidas</button>
+  <button role="tab" id="tab-directo" data-tab="directo">Directo</button>
+  <button role="tab" id="tab-clasificaciones" data-tab="clasificaciones">Clasificaciones</button>
+</nav>
+
+<script src="datos.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
