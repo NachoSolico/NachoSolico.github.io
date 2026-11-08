@@ -500,6 +500,7 @@ select 2, status, substr(content, greatest(strpos(content, '<div class="card-pan
 // En automático solo se lee hoy: lo de ayer ya no cambia
 const SQL_RES_HOY = `select 2 as jornada, status, substr(content, greatest(strpos(content, '<div class="card-panel'), 1)) as html from extensions.http_get('${RES_GENERAL}')`;
 const AUTO_MS = 120000;
+const TERMINADO = true;   // el concurso ha terminado: las clasificaciones ya no se actualizan solas
 const enfocado = () => { const a = document.activeElement; return a && /^(SELECT|INPUT|TEXTAREA)$/.test(a.tagName); };
 const CODIGOS = {ELI:"Eliminado", NOP:"No presentado", RET:"Retirado", NP:"No presentado", DES:"Descalificado"};
 function filasSQL(payload){
@@ -551,7 +552,7 @@ async function actualizarDesdeFuente(auto){
     mezclarRes(pruebas);
     st.estadoRes = `Actualizado a las ${horaTxt()}`;
   }catch(e){
-    st.estadoRes = `<span class="err">No se ha podido actualizar. Se vuelve a intentar en 2 minutos.</span>`;
+    st.estadoRes = `<span class="err">No se ha podido actualizar.${TERMINADO ? "" : " Se vuelve a intentar en 2 minutos."}</span>`;
   }
   st.ultimaAuto = Date.now();
   st.cargandoWeb = false;
@@ -602,12 +603,13 @@ async function actualizarDesdeWeb(auto){
   if (!(auto && enfocado())) render();
 }
 function tareaAuto(){
+  if (TERMINADO && !(PUBLICA && FUENTE_WEB && !st.ultimaAuto)) return;   // terminado: solo la carga inicial en la versión sin datos guardados
   if ((PUBLICA && !FUENTE_WEB) || st.subida || !st.autoOn || !st.autoListo || st.cargandoWeb) return;
   if (document.visibilityState && document.visibilityState !== "visible") return;
   if (Date.now() - (st.ultimaAuto || 0) < AUTO_MS - 5000) return;
   actualizarDesdeWeb(true);
 }
-const casillaAuto = () => (PUBLICA && !FUENTE_WEB) || st.subida ? "" : `<label class="small row" style="gap:6px;cursor:pointer"><input type="checkbox" id="autoRes" ${st.autoOn ? "checked" : ""}> Actualizar sola cada 2 minutos${st.autoOn && !st.autoListo ? " (empieza tras pulsar una vez el botón)" : ""}</label>`;
+const casillaAuto = () => TERMINADO || (PUBLICA && !FUENTE_WEB) || st.subida ? "" : `<label class="small row" style="gap:6px;cursor:pointer"><input type="checkbox" id="autoRes" ${st.autoOn ? "checked" : ""}> Actualizar sola cada 2 minutos${st.autoOn && !st.autoListo ? " (empieza tras pulsar una vez el botón)" : ""}</label>`;
 const botonActualizar = () => PUBLICA && !FUENTE_WEB ? "" : `<button class="btn primary" data-act="actualizarWeb" ${st.cargandoWeb?"disabled":""}>${st.cargandoWeb ? "Actualizando…" : "↻ Actualizar clasificaciones"}</button>`;
 
 /* ---------- pintar y eventos ---------- */
