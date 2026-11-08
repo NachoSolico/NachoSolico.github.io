@@ -82,7 +82,7 @@ const DETALLE = {
  ["A X G","Línea central, paso medio, parada, inmovilidad y saludo. Salida por A al paso con riendas largas"]],
  conjunto:[["Posición y asiento del jinete",4],["Corrección, efecto e independencia de las ayudas",3],["Precisión, trazados y esquinas",2]] },
 
-"4 años Final 2022": { titulo:"Final caballos de 4 años", tiempo:"5₲00″", sinLetras:true, ejercicios:[
+"4 años Final 2022": { titulo:"Final caballos de 4 años", tiempo:"5 min", sinLetras:true, ejercicios:[
  ["A","Entrada al trote de trabajo por la línea central, sin saludo"],
  ["","Pista a la derecha"],
  ["","Círculo de 15 m"],
@@ -107,7 +107,7 @@ const DETALLE = {
  ["A","Salida por A al paso con riendas largas"]],
  conjunto:[["Trote"],["Paso"],["Galope"],["Sumisión y respuesta a las ayudas"],["Expectativas de futuro"]] },
 
-"5 años Final 2022": { titulo:"Final caballos de 5 años", tiempo:"5₲00″", sinLetras:true, ejercicios:[
+"5 años Final 2022": { titulo:"Final caballos de 5 años", tiempo:"5 min", sinLetras:true, ejercicios:[
  ["A","Entrada al trote de trabajo"],
  ["X","Parada, saludo y partir al trote de trabajo"],
  ["","Pista a mano izquierda"],
@@ -135,7 +135,7 @@ const DETALLE = {
  ["A","Salida por A al paso con riendas largas"]],
  conjunto:[["Trote"],["Paso"],["Galope"],["Sumisión y elasticidad"],["Expectativas de futuro"],["Nivel de entrenamiento"]] },
 
-"Alevines Individual 2024": { titulo:"Alevines Individual", tiempo:"4₲30″", ejercicios:[
+"Alevines Individual 2024": { titulo:"Alevines Individual", tiempo:"4 min 30 s", ejercicios:[
  ["A X C","Entrada al trote de trabajo. Parada y saludo. En C, pista a la derecha"],
  ["R","Círculo de 15 m"],
  ["R K","Cambio de mano en diagonal alargando el trote; en K, trote de trabajo"],
@@ -161,7 +161,7 @@ const DETALLE = {
  ["A X","Doblar a lo largo. Parada, inmovilidad y saludo. Salida por A al paso con riendas largas"]],
  conjunto:[["Aires",1],["Energía y remetimiento",1],["Posición del cuello y nuca",2],["Atención y confianza",1],["Posición y asiento del jinete",2],["Corrección y efecto de las ayudas",2],["Esquinas y transiciones",2]] },
 
-"Infantiles Individual 2024": { titulo:"Infantiles Individual", tiempo:"3₲50″", ejercicios:[
+"Infantiles Individual 2024": { titulo:"Infantiles Individual", tiempo:"3 min 50 s", ejercicios:[
  ["A X","Entrada al trote reunido. Parada, inmovilidad y saludo",1,"1"],
  ["X C","Partir al trote reunido",1,"2"],
  ["C H S E","En C, pista a la izquierda. Espalda adentro a la izquierda",2,"3"],
@@ -184,7 +184,7 @@ const DETALLE = {
  ["A X","Línea central. Parada, inmovilidad y saludo",1,"19"]],
  conjunto:[["Posición y asiento, uso de las ayudas, precisión e impresión general (nota de calidad)"]] },
 
-"Juveniles 0 Individual 2022": { titulo:"Juveniles 0* Individual", tiempo:"6₲00″", ejercicios:[
+"Juveniles 0 Individual 2022": { titulo:"Juveniles 0* Individual", tiempo:"6 min", ejercicios:[
  ["A X","Entrada al galope reunido. Parada, inmovilidad y saludo. Partir al trote reunido"],
  ["C H F","En C, pista a la izquierda. Cambio de mano al trote medio; en F, trote reunido"],
  ["","Transiciones trote reunido, medio y reunido"],
@@ -209,7 +209,7 @@ const DETALLE = {
  ["L G","Trote medio. En G, parada, inmovilidad y saludo. Salida por A al paso con riendas largas"]],
  conjunto:[["Impresión general",2]] },
 
-"Juveniles Individual 2018": { titulo:"Juveniles Individual", tiempo:"5₲15″", ejercicios:[
+"Juveniles Individual 2018": { titulo:"Juveniles Individual", tiempo:"5 min 15 s", ejercicios:[
  ["A X C","Entrada al galope reunido. Parada, inmovilidad y saludo. Partir al trote reunido"],
  ["C H X F","En C, pista a la izquierda. Trote medio; en F, trote reunido"],
  ["K E","Espalda adentro a la derecha"],
@@ -241,7 +241,7 @@ const DETALLE = {
  ["A X","Doblar a lo largo. Parada, inmovilidad y saludo. Salida por A al paso con riendas largas"]],
  conjunto:[["Impresión general",2]] },
 
-"Clásica 2 2023": { titulo:"Clásica 2", tiempo:"5₲40″", ejercicios:[
+"Clásica 2 2023": { titulo:"Clásica 2", tiempo:"5 min 40 s", ejercicios:[
  ["A X","Entrada al galope reunido. Parada y saludo. Partir al trote reunido"],
  ["C M B","En C, pista a la derecha. Espalda adentro"],
  ["B L K","Cambio de mano al trote medio; en K, trote reunido"],
@@ -266,7 +266,7 @@ const DETALLE = {
  ["C B X G","Pista a la derecha. Doblar a la derecha. Parada, inmovilidad y saludo. Salida por A al paso con riendas largas"]],
  conjunto:[["Impresión general",2]] },
 
-"Intermedia I 2022": { titulo:"Intermedia I", tiempo:"5₲30″", ejercicios:[
+"Intermedia I 2022": { titulo:"Intermedia I", tiempo:"5 min 30 s", ejercicios:[
  ["A X C","Entrada al galope reunido. Parada, inmovilidad y saludo. Partir al trote reunido"],
  ["C H X F","En C, pista a la izquierda. Trote largo; en F, trote reunido"],
  ["A D X","Doblar a lo largo. Espalda adentro a la derecha"],
@@ -294,7 +294,7 @@ const DETALLE = {
  ["A X","Doblar a lo largo. Parada, inmovilidad y saludo. Salida por A al paso con riendas largas"]],
  conjunto:[["Impresión general",2]] },
 
-"Rider 1C 2024": { titulo:"Rider 1C", tiempo:"5₲30″", ejercicios:[
+"Rider 1C 2024": { titulo:"Rider 1C", tiempo:"5 min 30 s", ejercicios:[
  ["A X C","Entrada al trote de trabajo. Parada, inmovilidad y saludo. En C, pista a la derecha"],
  ["C A","Serpentina de 4 bucles, acabando en A a mano izquierda"],
  ["F X H","Cambio de mano mostrando algún tranco de trote medio"],
@@ -317,7 +317,7 @@ const DETALLE = {
  ["X","Parada, inmovilidad y saludo. Salida por A al paso con riendas largas"]],
  conjunto:[["Posición y asiento del jinete"],["Corrección y efecto de las ayudas"]] },
 
-"Rider 2B 2024": { titulo:"Rider 2B", tiempo:"5₲30″", ejercicios:[
+"Rider 2B 2024": { titulo:"Rider 2B", tiempo:"5 min 30 s", ejercicios:[
  ["A X C","Entrada al trote de trabajo. Parada, inmovilidad y saludo. En C, pista a la izquierda"],
  ["C E","Trote de trabajo. En E, doblar a la izquierda"],
  ["X B","En X, círculo de 15 m a la izquierda y otro de 15 m a la derecha. En B, pista a la derecha"],
@@ -342,7 +342,7 @@ const DETALLE = {
  ["A X","Línea central. Parada, inmovilidad y saludo. Salida por A al paso con riendas largas"]],
  conjunto:[["Impresión general",2]] },
 
-"Rider 3B 2024": { titulo:"Rider 3B", tiempo:"5₲00″", ejercicios:[
+"Rider 3B 2024": { titulo:"Rider 3B", tiempo:"5 min", ejercicios:[
  ["A X","Entrada al trote de trabajo. Parada, inmovilidad y saludo. Partir al trote de trabajo"],
  ["C M X K","En C, pista a la derecha. Cambio de mano al trote medio"],
  ["K F","Trote reunido"],
